@@ -37,7 +37,7 @@ def main(argv):
     output = ConstructOutput(inputDirOrFile, globalClassDictionary)
 
     # write the output to a file in httpdocs so we can access it from a browser
-    outputFile = open('/opt/site/www/httpdocs/sniffer.html', 'w')
+    outputFile = open('/opt/git/Sniffer/output/sniffer.html', 'w')
     outputFile.write(output)
     outputFile.close()
 
