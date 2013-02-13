@@ -34,29 +34,40 @@ def main(argv):
     #print 'everything:'
     #pprint.pprint(classDictionary)
 
-    output = ConstructOutput(inputDirOrFile, globalClassDictionary)
+    outputHead = True # turn this off if the output will be displayed within another page.
+    output = ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead)
 
     # write the output to a file in httpdocs so we can access it from a browser
     outputFile = open('/opt/git/Sniffer/output/sniffer.html', 'w')
     outputFile.write(output)
     outputFile.close()
 
-def ConstructOutput(inputDirOrFile, globalClassDictionary):
-    output = '<html>'
-    output += '<body>'
-    output += 'checking code in: ' + inputDirOrFile
+def ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead):
+    output = '<!DOCTYPE html>\n'
+    output += '<html>\n'
+
+    if outputHead:
+        output += '<head>\n'
+        output += '<title>Sniffer output</title>\n'
+        output += '<link href="output.css" type="text/css" rel="stylesheet" />\n'
+        output += '</head>\n'
+    
+    output += '<body>\n'
+    output += '<h1>Sniffer Output</h1>\n'
+    output += 'Checked code in: <br> ' + inputDirOrFile + '\n'
+    output += '<p />'
 
     for fileName in globalClassDictionary.keys():
-        output += '<div style="border-style:solid; border-color:blue; margin:5px; padding:5px">'
-        output += fileName
+        output += '<div class="border filename" >\n'
+        output += '<b>' + fileName + '</b>\n'
 
         classDictionary = globalClassDictionary[fileName]
         for classInstance in classDictionary:
-            output += '<div style="border-style:solid; border-color:yellow; margin:5px; padding:5px">'
-            output += 'class ' + classInstance
+            output += '<div class="border class" >\n'
+            output += 'class ' + classInstance + '\n'
 
             for function in classDictionary[classInstance]['classfunctions']:
-                output += '<div style="border-style:solid; border-color:red; margin:5px; padding:5px">'
+                output += '<div class="border function" >\n'
 
                 varCrazy = function['variables']['crazy']
                 loopCrazy = function['loops']['crazy']
@@ -69,44 +80,52 @@ def ConstructOutput(inputDirOrFile, globalClassDictionary):
                     if times > 1:
                         functionsCrazyCount += 1
 
-                titleColour='green'
+                functionSpanClass = 'functionGood'
+                functionStatus = 'PASS'
                 if len(varCrazy) + len(loopCrazy) + functionsCrazyCount > 0:
-                    titleColour = 'red'
+                    functionSpanClass = 'functionBad'
+                    functionStatus = 'FAIL'
 
-                output += '<span style="background-color:'+titleColour+'">' + function['header'] + '</span><br/>'
-                #print 'variables in this function:'
-                #pprint.pprint( function['variables']['vars'])
+                output += function['header'] + ' - <span class="'+functionSpanClass+'">\n' + functionStatus + '</span>\n<br/>\n'
+
+             #   output += '<div class="border variables">\n'
+             #   output += 'variables in this function:'
+
+             #  # pprint.pprint(function['variables']['vars'])
+             #   for var in function['variables']['vars']:
+             #       output += var + ': ' + string(function['variables']['vars'][var]) + '<br>\n'
+             #   output += '</div>'
 
                 if len(varCrazy) > 0:
-                    output += 'Craziness in Variables:'
-                    output += '<ul>'
+                    output += 'Craziness in Variables:\n'
+                    output += '<ul>\n'
                     for crazy in varCrazy:
-                        output += '<li>' + crazy + '</li>'
-                    output += '</ul>'
+                        output += '<li>\n' + crazy + '</li>\n'
+                    output += '</ul>\n'
 
                 if len(loopCrazy) > 0:
-                    output += 'Craziness in For Loops:'
-                    output += '<ul>'
+                    output += 'Craziness in For Loops:\n'
+                    output += '<ul>\n'
                     for crazy in loopCrazy:
-                        output += '<li>' + crazy + '</li>'
-                    output += '</ul>'
+                        output += '<li>\n' + crazy + '</li>\n'
+                    output += '</ul>\n'
 
                 if functionsCrazyCount > 0:
-                    output += 'Multiple Function Calls:'
-                    output += '<ul>'
+                    output += 'Multiple Function Calls:\n'
+                    output += '<ul>\n'
                     for crazy in functionsCrazy:
                         times = functionsCrazy[crazy]
                         if times > 1:
-                            output += '<li>' + crazy + '() called ' + str(times) + ' times</li>'
-                    output += '</ul>'
+                            output += '<li>\n' + crazy + '() called ' + str(times) + ' times</li>\n'
+                    output += '</ul>\n'
 
-                output += '</div>'
+                output += '</div>\n'
 
-            output += '</div>'
+            output += '</div>\n'
 
-        output += '</div>'
+        output += '</div>\n'
 
-    output += '</body>'
+    output += '</body>\n'
     output += '</html>'
 
     return output

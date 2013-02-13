@@ -1,0 +1,44 @@
+body {
+    color: #333333;
+    font-family: sans-serif;
+}
+
+h1 {
+    text-align: center;
+    color: #FF0000;
+}
+
+div.border {
+    border-style:solid; 
+    border-radius: 15px;
+    margin:5px; 
+    padding:5px;
+}
+
+div.filename {
+    border-color: #0000FF; 
+    background: #AAAAFF;
+}
+
+div.class {
+    border-color: #FFFF00; 
+    background: #FFFFAA;
+}
+
+div.function {
+    border-color: #FF00FF; 
+    background: #FFAAFF;
+}
+
+div.variables {
+    border-color: #00FFFF;
+    background: #AAFFFF;
+}
+
+span.functionGood {
+    background-color: green;
+}
+
+span.functionBad {
+    background-color: red;
+}
