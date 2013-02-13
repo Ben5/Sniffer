@@ -35,24 +35,38 @@ def main(argv):
     #pprint.pprint(classDictionary)
 
     outputHead = True # turn this off if the output will be displayed within another page.
-    output = ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead)
 
     # write the output to a file in httpdocs so we can access it from a browser
+    output = ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead, False)
+
     outputFile = open('/opt/git/Sniffer/output/sniffer.html', 'w')
     outputFile.write(output)
     outputFile.close()
 
-def ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead):
-    output = '<!DOCTYPE html>\n'
-    output += '<html>\n'
 
-    if outputHead:
-        output += '<head>\n'
-        output += '<title>Sniffer output</title>\n'
-        output += '<link href="output.css" type="text/css" rel="stylesheet" />\n'
-        output += '</head>\n'
-    
-    output += '<body>\n'
+    # write a reduced version the output to a file in httpdocs so that we can embed it in another page
+    output = ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead, True)
+
+    outputFile = open('/opt/git/Sniffer/output/sniffer_embed.html', 'w')
+    outputFile.write(output)
+    outputFile.close()
+
+def ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead, embedVersion):
+    output = ''
+
+    if embedVersion == False:
+        output += '<!DOCTYPE html>\n'
+        output += '<html>\n'
+
+        if outputHead:
+            output += '<head>\n'
+            output += '<title>Sniffer output</title>\n'
+            output += '<link href="output.css" type="text/css" rel="stylesheet" />\n'
+            output += '</head>\n'
+        
+        output += '<body>\n'
+
+
     output += '<h1>Sniffer Output</h1>\n'
     output += 'Checked code in: <br> ' + inputDirOrFile + '\n'
     output += '<p />'
@@ -125,8 +139,9 @@ def ConstructOutput(inputDirOrFile, globalClassDictionary, outputHead):
 
         output += '</div>\n'
 
-    output += '</body>\n'
-    output += '</html>'
+    if embedVersion == False:
+        output += '</body>\n'
+        output += '</html>'
 
     return output
 
